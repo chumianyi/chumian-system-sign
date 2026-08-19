@@ -34,14 +34,14 @@ jobs:
       - name: Build Release APK
         run: ./gradlew assembleRelease --stacktrace
 
-      - name: List outputs
-        run: ls -la app/build/outputs/apk/release/
+      - name: Find APK outputs
+        run: find app/build/outputs -name "*.apk" -exec ls -la {} \;
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: chumian-system-sign-release
-          path: app/build/outputs/apk/release/*.apk
+          path: app/build/outputs/apk/**/*.apk
 
       - name: Create Release
         if: github.event_name == 'workflow_dispatch'
