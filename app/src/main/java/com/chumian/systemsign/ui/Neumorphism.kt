@@ -73,7 +73,7 @@ fun NeuCard(
                 cornerRadius,
                 elevation
             )
-            .padding(16.dp)
+            .padding(12.dp)
     ) {
         content()
     }
@@ -108,13 +108,13 @@ fun NeuButton(
             ) {
                 if (enabled) onClick()
             }
-            .padding(horizontal = 24.dp, vertical = 14.dp),
+            .padding(horizontal = 20.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
             color = Color.White,
-            fontSize = 16.sp,
+            fontSize = 14.sp,
             fontWeight = FontWeight.Medium
         )
     }
@@ -147,13 +147,13 @@ fun NeuOutlinedButton(
                 onClick()
                 pressed = false
             }
-            .padding(horizontal = 20.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = text,
             color = NeuColors.text(dark),
-            fontSize = 15.sp,
+            fontSize = 13.sp,
             fontWeight = FontWeight.Medium
         )
     }

@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.chumian.systemsign.ui.NeuButton
@@ -33,119 +34,177 @@ fun GenerateScreen(
     var countryCode by remember { mutableStateOf("CN") }
     var resultMsg by remember { mutableStateOf("") }
 
+    val textColor = NeuColors.text(dark)
+    val secondaryColor = NeuColors.textSecondary(dark)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(12.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(
             text = "生成签名证书",
-            fontSize = 22.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = NeuColors.text(dark)
+            color = textColor
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         NeuCard(dark = dark) {
-            Text("基本信息", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = NeuColors.text(dark))
+            Text("基本信息", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
             Spacer(modifier = Modifier.height(12.dp))
 
+            Text("密钥名称", fontSize = 12.sp, color = secondaryColor)
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
                 value = name, onValueChange = { name = it },
-                label = { Text("密钥名称") }, modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+                singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NeuColors.text(dark), unfocusedTextColor = NeuColors.text(dark)
+                    focusedTextColor = textColor, unfocusedTextColor = textColor
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = alias, onValueChange = { alias = it },
-                label = { Text("Key 别名") }, modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NeuColors.text(dark), unfocusedTextColor = NeuColors.text(dark)
-                )
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = storePassword, onValueChange = { storePassword = it },
-                label = { Text("Store 密码") },
-                visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NeuColors.text(dark), unfocusedTextColor = NeuColors.text(dark)
-                )
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = keyPassword, onValueChange = { keyPassword = it },
-                label = { Text("Key 密码") },
-                visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NeuColors.text(dark), unfocusedTextColor = NeuColors.text(dark)
-                )
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = validity, onValueChange = { validity = it },
-                label = { Text("有效期 (年)") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NeuColors.text(dark), unfocusedTextColor = NeuColors.text(dark)
-                )
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        NeuCard(dark = dark) {
-            Text("组织信息 (DN)", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = NeuColors.text(dark))
             Spacer(modifier = Modifier.height(12.dp))
 
+            Text("Key 别名", fontSize = 12.sp, color = secondaryColor)
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
-                value = orgUnit, onValueChange = { orgUnit = it },
-                label = { Text("组织单位 (OU)") }, modifier = Modifier.fillMaxWidth(),
+                value = alias, onValueChange = { alias = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+                singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NeuColors.text(dark), unfocusedTextColor = NeuColors.text(dark)
+                    focusedTextColor = textColor, unfocusedTextColor = textColor
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text("Store 密码", fontSize = 12.sp, color = secondaryColor)
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
-                value = org, onValueChange = { org = it },
-                label = { Text("组织 (O)") }, modifier = Modifier.fillMaxWidth(),
+                value = storePassword, onValueChange = { storePassword = it },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+                singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NeuColors.text(dark), unfocusedTextColor = NeuColors.text(dark)
+                    focusedTextColor = textColor, unfocusedTextColor = textColor
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text("Key 密码", fontSize = 12.sp, color = secondaryColor)
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
-                value = city, onValueChange = { city = it },
-                label = { Text("城市 (L)") }, modifier = Modifier.fillMaxWidth(),
+                value = keyPassword, onValueChange = { keyPassword = it },
+                visualTransformation = PasswordVisualTransformation(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+                singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NeuColors.text(dark), unfocusedTextColor = NeuColors.text(dark)
+                    focusedTextColor = textColor, unfocusedTextColor = textColor
                 )
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text("有效期 (年)", fontSize = 12.sp, color = secondaryColor)
+            Spacer(modifier = Modifier.height(4.dp))
             OutlinedTextField(
-                value = province, onValueChange = { province = it },
-                label = { Text("省份 (ST)") }, modifier = Modifier.fillMaxWidth(),
+                value = validity, onValueChange = { validity = it },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+                singleLine = true,
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NeuColors.text(dark), unfocusedTextColor = NeuColors.text(dark)
-                )
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedTextField(
-                value = countryCode, onValueChange = { countryCode = it },
-                label = { Text("国家代码 (C)") }, modifier = Modifier.fillMaxWidth(),
-                colors = OutlinedTextFieldDefaults.colors(
-                    focusedTextColor = NeuColors.text(dark), unfocusedTextColor = NeuColors.text(dark)
+                    focusedTextColor = textColor, unfocusedTextColor = textColor
                 )
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        NeuCard(dark = dark) {
+            Text("组织信息 (DN)", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text("组织单位 (OU)", fontSize = 12.sp, color = secondaryColor)
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(
+                value = orgUnit, onValueChange = { orgUnit = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = textColor, unfocusedTextColor = textColor
+                )
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text("组织 (O)", fontSize = 12.sp, color = secondaryColor)
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(
+                value = org, onValueChange = { org = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = textColor, unfocusedTextColor = textColor
+                )
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text("城市 (L)", fontSize = 12.sp, color = secondaryColor)
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(
+                value = city, onValueChange = { city = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = textColor, unfocusedTextColor = textColor
+                )
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text("省份 (ST)", fontSize = 12.sp, color = secondaryColor)
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(
+                value = province, onValueChange = { province = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = textColor, unfocusedTextColor = textColor
+                )
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text("国家代码 (C)", fontSize = 12.sp, color = secondaryColor)
+            Spacer(modifier = Modifier.height(4.dp))
+            OutlinedTextField(
+                value = countryCode, onValueChange = { countryCode = it },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp),
+                singleLine = true,
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedTextColor = textColor, unfocusedTextColor = textColor
+                )
+            )
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
 
         NeuButton(
             onClick = {
@@ -161,9 +220,9 @@ fun GenerateScreen(
         )
 
         if (resultMsg.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(12.dp))
-            Text(resultMsg, fontSize = 13.sp, color = NeuColors.textSecondary(dark))
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(resultMsg, fontSize = 12.sp, color = secondaryColor)
         }
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }

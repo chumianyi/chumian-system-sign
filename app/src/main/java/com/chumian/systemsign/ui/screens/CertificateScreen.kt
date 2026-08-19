@@ -26,18 +26,21 @@ fun CertificateScreen(
     keystores: List<KeystoreInfo>,
     onDelete: (String) -> Unit
 ) {
+    val textColor = NeuColors.text(dark)
+    val secondaryColor = NeuColors.textSecondary(dark)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(12.dp)
     ) {
         Text(
             text = "证书管理",
-            fontSize = 22.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = NeuColors.text(dark)
+            color = textColor
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         if (keystores.isEmpty()) {
             NeuCard(dark = dark) {
@@ -48,28 +51,28 @@ fun CertificateScreen(
                     Icon(
                         Icons.Default.VpnKey,
                         contentDescription = null,
-                        tint = NeuColors.textSecondary(dark),
-                        modifier = Modifier.size(48.dp)
+                        tint = secondaryColor,
+                        modifier = Modifier.size(40.dp)
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(10.dp))
                     Text(
                         "暂无保存的证书",
-                        fontSize = 15.sp,
-                        color = NeuColors.textSecondary(dark)
+                        fontSize = 14.sp,
+                        color = secondaryColor
                     )
                     Text(
                         "在「生成签名」中创建或在「自定义签名」中导入",
-                        fontSize = 12.sp,
-                        color = NeuColors.textSecondary(dark)
+                        fontSize = 11.sp,
+                        color = secondaryColor
                     )
                 }
             }
         } else {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(keystores) { ks ->
-                    KeystoreItem(dark, ks, onDelete)
+                    KeystoreItem(dark, ks, onDelete, textColor, secondaryColor)
                 }
             }
         }
@@ -77,7 +80,13 @@ fun CertificateScreen(
 }
 
 @Composable
-fun KeystoreItem(dark: Boolean, ks: KeystoreInfo, onDelete: (String) -> Unit) {
+fun KeystoreItem(
+    dark: Boolean,
+    ks: KeystoreInfo,
+    onDelete: (String) -> Unit,
+    textColor: androidx.compose.ui.graphics.Color,
+    secondaryColor: androidx.compose.ui.graphics.Color
+) {
     NeuCard(dark = dark) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -85,28 +94,28 @@ fun KeystoreItem(dark: Boolean, ks: KeystoreInfo, onDelete: (String) -> Unit) {
         ) {
             Box(
                 modifier = Modifier
-                    .size(44.dp)
+                    .size(36.dp)
                     .background(
                         NeuColors.accent(dark),
-                        androidx.compose.foundation.shape.RoundedCornerShape(12.dp)
+                        androidx.compose.foundation.shape.RoundedCornerShape(10.dp)
                     ),
                 contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.VpnKey, null, tint = androidx.compose.ui.graphics.Color.White, modifier = Modifier.size(22.dp))
+                Icon(Icons.Default.VpnKey, null, tint = androidx.compose.ui.graphics.Color.White, modifier = Modifier.size(18.dp))
             }
-            Spacer(modifier = Modifier.width(12.dp))
+            Spacer(modifier = Modifier.width(10.dp))
             Column(modifier = Modifier.weight(1f)) {
-                Text(ks.name, fontSize = 15.sp, fontWeight = FontWeight.Bold, color = NeuColors.text(dark))
-                Text("别名: ${ks.alias}", fontSize = 12.sp, color = NeuColors.textSecondary(dark))
-                Text("有效期: ${ks.validityYears} 年", fontSize = 12.sp, color = NeuColors.textSecondary(dark))
+                Text(ks.name, fontSize = 13.sp, fontWeight = FontWeight.Bold, color = textColor)
+                Text("别名: ${ks.alias}", fontSize = 11.sp, color = secondaryColor)
+                Text("有效期: ${ks.validityYears} 年", fontSize = 11.sp, color = secondaryColor)
                 Text(
                     "创建: ${SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(Date(ks.createdAt))}",
-                    fontSize = 11.sp,
-                    color = NeuColors.textSecondary(dark)
+                    fontSize = 10.sp,
+                    color = secondaryColor
                 )
             }
-            IconButton(onClick = { onDelete(ks.path) }) {
-                Icon(Icons.Default.Delete, "删除", tint = NeuColors.error(dark))
+            IconButton(onClick = { onDelete(ks.path) }, modifier = Modifier.size(36.dp)) {
+                Icon(Icons.Default.Delete, "删除", tint = NeuColors.error(dark), modifier = Modifier.size(18.dp))
             }
         }
     }

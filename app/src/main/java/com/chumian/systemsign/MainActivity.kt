@@ -6,13 +6,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.FileProvider
 import com.chumian.systemsign.data.SigningMode
 import com.chumian.systemsign.ui.*
@@ -51,25 +57,45 @@ class MainActivity : ComponentActivity() {
         Scaffold(
             containerColor = MaterialTheme.colorScheme.background,
             bottomBar = {
-                NavigationBar(
-                    containerColor = MaterialTheme.colorScheme.background
+                val tabs = listOf(
+                    TabItem("签名", Icons.Default.Edit),
+                    TabItem("证书", Icons.Default.VpnKey),
+                    TabItem("历史", Icons.Default.History),
+                    TabItem("设置", Icons.Default.Settings)
+                )
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(56.dp)
+                        .background(MaterialTheme.colorScheme.background),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val tabs = listOf(
-                        TabItem("签名", Icons.Default.Edit),
-                        TabItem("证书", Icons.Default.VpnKey),
-                        TabItem("历史", Icons.Default.History),
-                        TabItem("设置", Icons.Default.Settings)
-                    )
                     tabs.forEachIndexed { index, tab ->
-                        NavigationBarItem(
-                            icon = { Icon(tab.icon, tab.label) },
-                            label = { Text(tab.label) },
-                            selected = selectedTab == index,
-                            onClick = {
-                                selectedTab = index
-                                if (index == 0) selectedMode = null
-                            }
-                        )
+                        val selected = selectedTab == index
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable {
+                                    selectedTab = index
+                                    if (index == 0) selectedMode = null
+                                },
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center
+                        ) {
+                            Icon(
+                                imageVector = tab.icon,
+                                contentDescription = tab.label,
+                                tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(
+                                text = tab.label,
+                                fontSize = 10.sp,
+                                color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                                fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal
+                            )
+                        }
                     }
                 }
             }

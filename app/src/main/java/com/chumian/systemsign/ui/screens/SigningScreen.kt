@@ -48,6 +48,19 @@ fun SigningScreen(
     var storePassword by remember { mutableStateOf("") }
     var keyAlias by remember { mutableStateOf("") }
     var keyPassword by remember { mutableStateOf("") }
+    var editPackageName by remember { mutableStateOf("") }
+    var editAppName by remember { mutableStateOf("") }
+    var editVersionName by remember { mutableStateOf("") }
+    var editVersionCode by remember { mutableStateOf("") }
+
+    LaunchedEffect(apkInfo) {
+        apkInfo?.let {
+            editPackageName = it.packageName
+            editAppName = it.appName
+            editVersionName = it.versionName
+            editVersionCode = it.versionCode.toString()
+        }
+    }
 
     val apkPicker = rememberLauncherForActivityResult(
         ActivityResultContracts.GetContent()
@@ -59,10 +72,13 @@ fun SigningScreen(
         uri?.let { onImportKeystore(it, storePassword, keyAlias, keyPassword) }
     }
 
+    val textColor = NeuColors.text(dark)
+    val secondaryColor = NeuColors.textSecondary(dark)
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(12.dp)
             .verticalScroll(rememberScrollState())
     ) {
         Text(
@@ -71,18 +87,18 @@ fun SigningScreen(
                 SigningMode.CUSTOM -> "自定义签名"
                 SigningMode.GENERATE -> "生成签名"
             },
-            fontSize = 22.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
-            color = NeuColors.text(dark)
+            color = textColor
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         // APK Import
         NeuCard(dark = dark) {
-            Text("APK 文件", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = NeuColors.text(dark))
+            Text("APK 文件", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
             Spacer(modifier = Modifier.height(8.dp))
             if (apkInfo != null) {
-                ApkInfoCard(dark, apkInfo)
+                ApkInfoDisplay(dark, apkInfo)
                 Spacer(modifier = Modifier.height(8.dp))
                 NeuOutlinedButton(onClick = onClear, dark = dark, text = "重新选择")
             } else {
@@ -94,15 +110,89 @@ fun SigningScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Editable APK info (only when APK is loaded)
+        if (apkInfo != null) {
+            NeuCard(dark = dark) {
+                Text("修改信息 (可选)", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Each input field on its own row with proper spacing
+                Text("包名", fontSize = 12.sp, color = secondaryColor)
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = editPackageName,
+                    onValueChange = { editPackageName = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = textColor,
+                        unfocusedTextColor = textColor
+                    )
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text("应用名", fontSize = 12.sp, color = secondaryColor)
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = editAppName,
+                    onValueChange = { editAppName = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = textColor,
+                        unfocusedTextColor = textColor
+                    )
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text("版本名", fontSize = 12.sp, color = secondaryColor)
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = editVersionName,
+                    onValueChange = { editVersionName = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
+                    singleLine = true,
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = textColor,
+                        unfocusedTextColor = textColor
+                    )
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text("版本号", fontSize = 12.sp, color = secondaryColor)
+                Spacer(modifier = Modifier.height(4.dp))
+                OutlinedTextField(
+                    value = editVersionCode,
+                    onValueChange = { editVersionCode = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedTextColor = textColor,
+                        unfocusedTextColor = textColor
+                    )
+                )
+            }
+            Spacer(modifier = Modifier.height(12.dp))
+        }
 
         // System key config
         if (mode == SigningMode.SYSTEM) {
             NeuCard(dark = dark) {
-                Text("系统密钥配置", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = NeuColors.text(dark))
+                Text("系统密钥配置", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
                 Spacer(modifier = Modifier.height(12.dp))
 
-                Text("Android 版本", fontSize = 13.sp, color = NeuColors.textSecondary(dark))
+                Text("Android 版本", fontSize = 12.sp, color = secondaryColor)
                 Spacer(modifier = Modifier.height(4.dp))
                 ExposedDropdownMenuBox(
                     expanded = expandedVersion,
@@ -115,10 +205,11 @@ fun SigningScreen(
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedVersion) },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .heightIn(min = 48.dp)
                             .menuAnchor(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = NeuColors.text(dark),
-                            unfocusedTextColor = NeuColors.text(dark)
+                            focusedTextColor = textColor,
+                            unfocusedTextColor = textColor
                         )
                     )
                     ExposedDropdownMenu(
@@ -127,7 +218,7 @@ fun SigningScreen(
                     ) {
                         androidVersions.forEach { (tag, name) ->
                             DropdownMenuItem(
-                                text = { Text(name) },
+                                text = { Text(name, fontSize = 12.sp) },
                                 onClick = {
                                     onConfigChange(config.copy(androidVersion = tag))
                                     expandedVersion = false
@@ -138,7 +229,7 @@ fun SigningScreen(
                 }
 
                 Spacer(modifier = Modifier.height(12.dp))
-                Text("密钥类型", fontSize = 13.sp, color = NeuColors.textSecondary(dark))
+                Text("密钥类型", fontSize = 12.sp, color = secondaryColor)
                 Spacer(modifier = Modifier.height(4.dp))
                 ExposedDropdownMenuBox(
                     expanded = expandedKey,
@@ -151,10 +242,11 @@ fun SigningScreen(
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedKey) },
                         modifier = Modifier
                             .fillMaxWidth()
+                            .heightIn(min = 48.dp)
                             .menuAnchor(),
                         colors = OutlinedTextFieldDefaults.colors(
-                            focusedTextColor = NeuColors.text(dark),
-                            unfocusedTextColor = NeuColors.text(dark)
+                            focusedTextColor = textColor,
+                            unfocusedTextColor = textColor
                         )
                     )
                     ExposedDropdownMenu(
@@ -163,7 +255,7 @@ fun SigningScreen(
                     ) {
                         keyTypes.forEach { key ->
                             DropdownMenuItem(
-                                text = { Text(key) },
+                                text = { Text(key, fontSize = 12.sp) },
                                 onClick = {
                                     onConfigChange(config.copy(keyType = key))
                                     expandedKey = false
@@ -173,47 +265,58 @@ fun SigningScreen(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
         }
 
         // Custom keystore config
         if (mode == SigningMode.CUSTOM) {
             NeuCard(dark = dark) {
-                Text("自定义证书", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = NeuColors.text(dark))
+                Text("自定义证书", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
                 Spacer(modifier = Modifier.height(12.dp))
 
+                Text("Store 密码", fontSize = 12.sp, color = secondaryColor)
+                Spacer(modifier = Modifier.height(4.dp))
                 OutlinedTextField(
                     value = storePassword,
                     onValueChange = { storePassword = it },
-                    label = { Text("Store 密码") },
                     visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = NeuColors.text(dark),
-                        unfocusedTextColor = NeuColors.text(dark)
+                        focusedTextColor = textColor,
+                        unfocusedTextColor = textColor
                     )
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text("Key 别名", fontSize = 12.sp, color = secondaryColor)
+                Spacer(modifier = Modifier.height(4.dp))
                 OutlinedTextField(
                     value = keyAlias,
                     onValueChange = { keyAlias = it },
-                    label = { Text("Key 别名") },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = NeuColors.text(dark),
-                        unfocusedTextColor = NeuColors.text(dark)
+                        focusedTextColor = textColor,
+                        unfocusedTextColor = textColor
                     )
                 )
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
+
+                Text("Key 密码", fontSize = 12.sp, color = secondaryColor)
+                Spacer(modifier = Modifier.height(4.dp))
                 OutlinedTextField(
                     value = keyPassword,
                     onValueChange = { keyPassword = it },
-                    label = { Text("Key 密码") },
                     visualTransformation = PasswordVisualTransformation(),
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 48.dp),
                     colors = OutlinedTextFieldDefaults.colors(
-                        focusedTextColor = NeuColors.text(dark),
-                        unfocusedTextColor = NeuColors.text(dark)
+                        focusedTextColor = textColor,
+                        unfocusedTextColor = textColor
                     )
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -226,44 +329,43 @@ fun SigningScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
                         "已导入: ${config.customKeystorePath.substringAfterLast('/')}",
-                        fontSize = 12.sp,
+                        fontSize = 11.sp,
                         color = NeuColors.success(dark)
                     )
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
         }
 
         // Signing options
         if (mode != SigningMode.GENERATE) {
             NeuCard(dark = dark) {
-                Text("签名方案", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = NeuColors.text(dark))
+                Text("签名方案", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = config.v1Enabled,
                         onCheckedChange = { onConfigChange(config.copy(v1Enabled = it)) }
                     )
-                    Text("V1 (JAR 签名)", color = NeuColors.text(dark))
+                    Text("V1 (JAR 签名)", fontSize = 12.sp, color = textColor)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = config.v2Enabled,
                         onCheckedChange = { onConfigChange(config.copy(v2Enabled = it)) }
                     )
-                    Text("V2 (APK 签名方案)", color = NeuColors.text(dark))
+                    Text("V2 (APK 签名方案)", fontSize = 12.sp, color = textColor)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(
                         checked = config.v3Enabled,
                         onCheckedChange = { onConfigChange(config.copy(v3Enabled = it)) }
                     )
-                    Text("V3 (密钥轮换)", color = NeuColors.text(dark))
+                    Text("V3 (密钥轮换)", fontSize = 12.sp, color = textColor)
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
 
-            // Sign button
             NeuButton(
                 onClick = onStartSigning,
                 dark = dark,
@@ -273,12 +375,12 @@ fun SigningScreen(
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         // Progress & logs
         if (isSigning || logs.isNotEmpty()) {
             NeuCard(dark = dark) {
-                Text("签名日志", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = NeuColors.text(dark))
+                Text("签名日志", fontSize = 14.sp, fontWeight = FontWeight.Bold, color = textColor)
                 Spacer(modifier = Modifier.height(8.dp))
                 if (isSigning) {
                     LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
@@ -287,32 +389,32 @@ fun SigningScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .heightIn(max = 200.dp)
+                        .heightIn(max = 160.dp)
                         .verticalScroll(rememberScrollState())
                 ) {
                     logs.forEach { log ->
                         Text(
                             text = log,
-                            fontSize = 11.sp,
-                            color = NeuColors.textSecondary(dark),
+                            fontSize = 10.sp,
+                            color = secondaryColor,
                             fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
                         )
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(12.dp))
         }
 
         // Result
         if (result != null && result.success) {
             NeuCard(dark = dark) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.CheckCircle, "成功", tint = NeuColors.success(dark))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("签名成功!", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = NeuColors.success(dark))
+                    Icon(Icons.Default.CheckCircle, "成功", tint = NeuColors.success(dark), modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("签名成功!", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = NeuColors.success(dark))
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("输出: ${result.outputPath.substringAfterLast('/')}", fontSize = 12.sp, color = NeuColors.textSecondary(dark))
+                Text("输出: ${result.outputPath.substringAfterLast('/')}", fontSize = 11.sp, color = secondaryColor)
                 Spacer(modifier = Modifier.height(12.dp))
                 Row {
                     NeuButton(
@@ -321,7 +423,7 @@ fun SigningScreen(
                         text = "安装",
                         modifier = Modifier.weight(1f)
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     NeuOutlinedButton(
                         onClick = { onShare(result.outputPath) },
                         dark = dark,
@@ -332,53 +434,55 @@ fun SigningScreen(
         } else if (result != null && !result.success) {
             NeuCard(dark = dark) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.Error, "失败", tint = NeuColors.error(dark))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("签名失败", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = NeuColors.error(dark))
+                    Icon(Icons.Default.Error, "失败", tint = NeuColors.error(dark), modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text("签名失败", fontSize = 16.sp, fontWeight = FontWeight.Bold, color = NeuColors.error(dark))
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Text(result.message, fontSize = 12.sp, color = NeuColors.textSecondary(dark))
+                Text(result.message, fontSize = 11.sp, color = secondaryColor)
             }
         }
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 @Composable
-fun ApkInfoCard(dark: Boolean, info: ApkInfo) {
+fun ApkInfoDisplay(dark: Boolean, info: ApkInfo) {
+    val textColor = NeuColors.text(dark)
+    val secondaryColor = NeuColors.textSecondary(dark)
     Column {
-        InfoRow("应用名", info.appName, dark)
-        InfoRow("包名", info.packageName, dark)
-        InfoRow("版本名", info.versionName, dark)
-        InfoRow("版本号", info.versionCode.toString(), dark)
-        InfoRow("最低SDK", "API ${info.minSdk}", dark)
-        InfoRow("目标SDK", "API ${info.targetSdk}", dark)
+        InfoRow("应用名", info.appName, dark, textColor, secondaryColor)
+        InfoRow("包名", info.packageName, dark, textColor, secondaryColor)
+        InfoRow("版本名", info.versionName, dark, textColor, secondaryColor)
+        InfoRow("版本号", info.versionCode.toString(), dark, textColor, secondaryColor)
+        InfoRow("最低SDK", "API ${info.minSdk}", dark, textColor, secondaryColor)
+        InfoRow("目标SDK", "API ${info.targetSdk}", dark, textColor, secondaryColor)
         InfoRow(
             "签名状态",
             if (info.isSigned) "已签名 (${info.signatureScheme})" else "未签名",
-            dark
+            dark, textColor, secondaryColor
         )
     }
 }
 
 @Composable
-fun InfoRow(label: String, value: String, dark: Boolean) {
+fun InfoRow(label: String, value: String, dark: Boolean, textColor: androidx.compose.ui.graphics.Color, secondaryColor: androidx.compose.ui.graphics.Color) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 3.dp)
+            .padding(vertical = 2.dp)
     ) {
         Text(
             text = label,
-            fontSize = 13.sp,
-            color = NeuColors.textSecondary(dark),
-            modifier = Modifier.width(80.dp)
+            fontSize = 12.sp,
+            color = secondaryColor,
+            modifier = Modifier.width(70.dp)
         )
         Text(
             text = value.ifEmpty { "-" },
-            fontSize = 13.sp,
-            color = NeuColors.text(dark),
+            fontSize = 12.sp,
+            color = textColor,
             fontWeight = FontWeight.Medium
         )
     }
