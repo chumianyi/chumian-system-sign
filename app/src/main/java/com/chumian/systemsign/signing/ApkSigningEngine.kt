@@ -230,7 +230,7 @@ class ApkSigningEngine(private val context: Context) {
             startDate,
             endDate,
             org.bouncycastle.asn1.x500.X500Name(dn),
-            org.bouncycastle.cert.jcajce.JcaSubjectPublicKeyInfo.from(keyPair.public)
+            org.bouncycastle.asn1.x509.SubjectPublicKeyInfo.getInstance(keyPair.public.encoded)
         )
 
         val signer = org.bouncycastle.operator.jcajce.JcaContentSignerBuilder("SHA256WithRSA")
